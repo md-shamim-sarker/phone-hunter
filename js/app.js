@@ -1,4 +1,4 @@
-// Load data from api
+// Load phone data from api
 const loadPhones = async (searchText, isLimit) => {
     try {
         const res = await fetch(`https://openapi.programming-hero.com/api/phones?search=${searchText}`);
@@ -48,7 +48,7 @@ const displayPhones = (phones, isLimit) => {
                         <p class="card-text">Some quick example text to build on the card title and make up the
                                     bulk of the card's
                                     content.</p>
-                        <button href="#" class="btn btn-primary" data-bs-toggle="modal"
+                        <button onclick="loadPhoneDetails('${phone.slug}')" href="#" class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#exampleModal">Show Details</button>
                     </div>
                 </div>
@@ -98,3 +98,22 @@ const toggleSpinner = isLoading => {
 
 // Default data
 loadPhones('phone', true);
+
+// Show phone details
+const loadPhoneDetails = async id => {
+    try {
+        const url = `https://openapi.programming-hero.com/api/phone/${id}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        displayPhoneDetails(data);
+    } catch(error) {
+        console.log(error);
+    }
+};
+
+const displayPhoneDetails = phone => {
+    console.log(phone.data.mainFeatures);
+    document.getElementById('modal-title').innerHTML = phone.data.name;
+    document.getElementById('release-date').innerHTML = `<strong>Release Date:</strong> ${phone.data.releaseDate ? phone.data.releaseDate : '<span class="text-warning">Release Date Not Found.</span>'}`;
+    document.getElementById('details').innerHTML = `<strong>Phone Details: </strong>${JSON.stringify(phone.data.mainFeatures)}`;
+};
